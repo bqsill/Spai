@@ -2,11 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 var app = express();
-
-var conn_str = "mongodb+srv://bqsill:<Sanchez3$2>@spai.h0rwygg.mongodb.net/?retryWrites=true&w=majority&appName=Spai";
-
 // Connect to the db 
-mongoose.connect(conn_str, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(netInfo.conn_str)
     .then(() => {
         console.log("Successfully connected to the database");
     })
@@ -17,7 +14,8 @@ mongoose.connect(conn_str, {useNewUrlParser: true, useUnifiedTopology: true})
 const netInfo = {
     host: "localhost",
     port: 3000,
-    blacklistedIps: new Array(5000).map((_, i) => '0.0.0.0')
+    blacklistedIps: Array.from({ length: 5000 }, () => '0.0.0.0'), // Properly initialize the array
+    conn_str: "mongodb+srv://bqsill:aaryan11@spai.h0rwygg.mongodb.net/?retryWrites=true&w=majority&appName=Spai"
 }
 
 var userInfo = {
@@ -31,17 +29,9 @@ var userInfo = {
 
 
 app.get("/", function(req, res) {
-    if (req.ip != "127.0.0.1" && req.ip != "localhost" && req.ip != "::1") {
-        // Code for when the host is accessed from an external IP
-        if (netInfo.blacklistedIps.includes(req.ip)) {
-            res.writeHead(403);
-            res.end("Access Forbidden");
-        } else {
-            res.redirect("/home.html");
-        }
-    } else {
-        res.sendFile(__dirname + "/home.html");
-    }
+    app.get("/", function(req,res) { 
+        res.sendFile(__dirname + "/login.html");
+    })
 });
 
 app.get("/admin", function(req, res) {
